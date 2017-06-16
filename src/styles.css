@@ -1,1 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  padding-bottom: 50px;
+}
+
+.user-info {
+  overflow: hidden;
+}
+
+.user-info picture {
+  max-width: 100px;
+  border-radius: 100%;
+  border: 4px solid #1776a3;
+  display: block;
+  overflow: hidden;
+  float: left;
+  margin-right: 15px;
+}
+
+.user-info picture img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.user-info ul {
+  overflow: hidden;
+  list-style: none;
+  padding: 0;
+}

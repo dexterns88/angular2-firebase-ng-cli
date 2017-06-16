@@ -1,0 +1,22 @@
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Welcome to application</h3>
+  </div>
+
+  <div class="panel-body">
+
+    <div *ngIf="(user | async); else elseLogout">
+      <p>Welcome:  {{ (user | async)?.email }}</p>
+      <button class="btn btn-warning" (click)="logout()">Logout</button>
+    </div>
+
+    <ng-template #elseLogout>
+      <p>Please login to use all application feature</p>
+      <button class="btn btn-success" (click)="login()">Login</button>
+    </ng-template>
+
+  </div>
+
+</div>

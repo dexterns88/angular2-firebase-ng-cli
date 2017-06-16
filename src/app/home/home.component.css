@@ -1,0 +1,8 @@
+.chat-window {
+  max-height: 400px;
+  overflow: auto;
+}
+
+.chat-window .name {
+  text-transform: capitalize;
+}

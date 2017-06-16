@@ -1,0 +1,53 @@
+<h2>
+  Public chat
+</h2>
+
+<div class="row">
+  <div class="col-sm-12">
+    <form (ngSubmit)="save()" #f="ngForm">
+      <div class="form-group">
+        <label for="inputName" class="control-label">Name: </label>
+        {{ model.name }}
+      </div>
+
+      <div class="form-group">
+        <label for="message" class="control-label">Textarea</label>
+        <div>
+          <textarea id="message" class="form-control" rows="3" name="message" [(ngModel)]="model.message" #message="ngModel" placeholder="message"></textarea>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn-primary">Send message</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-sm-12">
+    <section class="firebase">
+      <h2>Firebase app chat</h2>
+
+      <div class="chat-window">
+        <div class="panel panel-info" *ngFor="let msg of items | async  ">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <span class="name">
+                {{ msg.name }},
+              </span>
+              <span>
+                {{ msg.date * 1000 | date:'dd-MM-yyyy HH:mm:ss' }}
+              </span>
+            </h4>
+          </div>
+          <div class="panel-body">
+            {{ msg.message | decrypt }}
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</div>
