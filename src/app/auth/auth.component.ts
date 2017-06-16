@@ -12,6 +12,7 @@ import * as firebase from 'firebase/app';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
+
 export class AuthComponent {
   user: Observable<firebase.User>;
   currentUser: any = {};
@@ -27,7 +28,7 @@ export class AuthComponent {
 
     this.as.checkUser().subscribe( auth => {
       if ( auth ) {
-        let usProv = auth.providerData[0];
+        const usProv = auth.providerData[0];
 
         this.user = afAuth.authState;
         this.currentUser['name'] = usProv.displayName;
@@ -55,7 +56,6 @@ export class AuthComponent {
   logout() {
     this.afAuth.auth.signOut();
     localStorage.removeItem('currentUser');
-
     this.app.userInfo();
   }
 
