@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { AppRouting } from './app-routing';
 import { AuthGuard } from './_guard/auth.guard';
 
+import { AuthService } from './services/auth.service';
+
 // Import Firebase
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
@@ -38,7 +40,8 @@ import { AuthComponent } from './auth/auth.component';
     AngularFireAuthModule
   ],
   providers: [
-    AuthGuard
+    AuthGuard,
+    AuthService
   ],
   bootstrap: [AppComponent]
 })
