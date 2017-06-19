@@ -41,7 +41,8 @@ import { AuthComponent } from './auth/auth.component';
   ],
   providers: [
     AuthGuard,
-    AuthService
+    AuthService,
+    AuthComponent
   ],
   bootstrap: [AppComponent]
 })

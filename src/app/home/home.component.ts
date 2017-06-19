@@ -20,12 +20,12 @@ export class HomeComponent implements OnInit {
     // set name for chat widget
     this.model.name = this.currentUser.email;
 
-    this.items = db.list('/public_chat', {
-      query: {
-        orderByKey: true,
-        orderByValue: true
-      }
-    });
+    // this.items = db.list('/public_chat', {
+    //   query: {
+    //     orderByKey: true,
+    //     orderByValue: true
+    //   }
+    // });
 
   }
 
