@@ -24,7 +24,7 @@
         <li>
           <a routerLink="/nema">404 page</a>
         </li>
-        <li routerLinkActive="active">
+        <li *ngIf="!currentUser" routerLinkActive="active">
           <a routerLink="/login">Login</a>
         </li>
       </ul>
@@ -49,6 +49,7 @@
     <li *ngIf="currentUser.name"><h3>{{ currentUser.name }}</h3></li>
     <li *ngIf="currentUser.email">{{ currentUser.email }}</li>
   </ul>
+  <a routerLink="/login" [queryParams]="{logout: 'true'}">Logout</a>
 </div>
 
 <div class="container">

@@ -27,6 +27,10 @@ const appRoutes: Routes = [
     component: AuthComponent
   },
   {
+    path: 'login/:id',
+    component: AuthComponent
+  },
+  {
     path: '**',
     component: Page404Component
   }

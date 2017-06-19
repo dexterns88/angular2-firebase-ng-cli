@@ -9,7 +9,6 @@
 
     <div *ngIf="(user | async); else elseLogout">
       <p>Welcome:  {{ (user | async)?.email }}</p>
-      <button class="btn btn-warning" (click)="logout()">Logout</button>
     </div>
 
     <ng-template #elseLogout>
