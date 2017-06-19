@@ -20,6 +20,7 @@ export class AuthComponent implements OnInit {
   private urlLogout: string;
   private sub: any;
   private id: any;
+  public loader = false;
   
   constructor(
     public afAuth: AngularFireAuth,
@@ -27,9 +28,7 @@ export class AuthComponent implements OnInit {
     private router: Router,
     private as: AuthService,
     private app: AppComponent
-  ) {
-    console.log('auth: component-constructor');
-  }
+  ) {}
 
   ngOnInit () {
 
@@ -56,7 +55,7 @@ export class AuthComponent implements OnInit {
             // redirect to return Url
             this.router.navigate([this.returnUrl]);
           } else {
-            this.router.navigate(['/login'])
+            this.router.navigate(['/'])
           }
         }
       }
@@ -75,6 +74,7 @@ export class AuthComponent implements OnInit {
   }
 
   login() {
+    this.loader = true;
     this.afAuth.auth.signInWithPopup( new firebase.auth.GoogleAuthProvider());
   }
 

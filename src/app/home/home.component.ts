@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
+import { FirebaseService } from '../services/firebase.service';
 
 import * as CryptoJS from 'crypto-js';
 import {environment} from '../../environments/environment';
@@ -7,26 +8,23 @@ import {environment} from '../../environments/environment';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers: [FirebaseService]
 })
 export class HomeComponent implements OnInit {
   items: FirebaseListObservable<any[]>;
   model: any = {};
   currentUser: any;
 
-  constructor(db: AngularFireDatabase) {
+  constructor(private db: AngularFireDatabase, private fs: FirebaseService) {
     this.currentUser = JSON.parse( localStorage.getItem('currentUser') );
-
     // set name for chat widget
     this.model.name = this.currentUser.email;
+  }
 
-    this.items = db.list('/public_chat', {
-      query: {
-        orderByKey: true,
-        orderByValue: true
-      }
-    });
-
+  ngOnInit() {
+    // call service for FireBase
+    this.items = this.fs.getPublicChat();
   }
 
   _enCrypt(message,key, iv) {
@@ -64,6 +62,4 @@ export class HomeComponent implements OnInit {
 
     this.model.message = '';
   }
-
-  ngOnInit() {}
 }

@@ -14,7 +14,4 @@ export class AuthService {
   checkUser() {
     return this.afAuth.authState;
   }
-
-  
-
 }

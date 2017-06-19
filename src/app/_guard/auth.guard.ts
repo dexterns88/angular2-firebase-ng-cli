@@ -23,6 +23,8 @@ export class AuthGuard implements CanActivate {
       });
     }
 
+    console.log( 'test' );
+
     if ( this.currentUser ) {
       return true;
     }
