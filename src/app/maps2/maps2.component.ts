@@ -9,6 +9,8 @@ export class Maps2Component implements OnInit {
   private title: string;
   private zoom: number;
   private markers: Marker[];
+  private paths: any;
+  private polygons: Polygon[];
 
   constructor() {
     this.title = 'Map api 2';
@@ -40,6 +42,63 @@ export class Maps2Component implements OnInit {
         }
       }
     ];
+
+    this.polygons = [
+      {
+        paths: [
+          [
+            {
+              lat: 37.78563945,
+              lng: -122.42082596
+            },
+            {
+              lat: 37.77166458,
+              lng: -122.44588852
+            },
+            {
+              lat: 37.79703447,
+              lng: -122.46974945
+            }
+          ]
+        ],
+        editable: false,
+        strokeColor: '#53ff21',
+        strokeWeight: 1,
+        strokeOpacity: 0.8,
+        fillColor: '#37aa1c',
+        fillOpacity: 0.4
+      },
+      {
+        paths: [
+          [
+            {
+              lat: 37.80083242,
+              lng: -122.42443085
+            },
+            {
+              lat: 37.80503706,
+              lng: -122.40245819
+            },
+            {
+              lat: 37.78930232,
+              lng: -122.38924026
+            },
+            {
+              lat: 37.780891,
+              lng: -122.42031097
+            }
+          ]
+        ],
+        editable: false,
+        strokeColor: '#1d28ff',
+        strokeWeight: 1,
+        strokeOpacity: 0.8,
+        fillColor: '#00226a',
+        fillOpacity: 0.4
+      }
+    ];
+
+  // constructor end
   }
 
   ngOnInit() {
@@ -57,8 +116,23 @@ export class Maps2Component implements OnInit {
   }
 }
 
+interface Polygon {
+  paths: Cord[][];
+  strokeColor: string;
+  strokeWeight: number;
+  editable: boolean;
+  strokeOpacity?: number;
+  fillColor?: string;
+  fillOpacity?: number;
+}
+
+interface Cord {
+  lat: number;
+  lng: number;
+}
+
 interface Marker {
-  position: MarkerPosition;
+  position: MapCord;
   icon?: MarkerIcon;
   draggable?: boolean;
   infoBox?: InfoBox;
@@ -68,7 +142,7 @@ interface InfoBox {
   text: string;
 }
 
-interface MarkerPosition {
+interface MapCord {
   lat: number;
   lng: number;
 }

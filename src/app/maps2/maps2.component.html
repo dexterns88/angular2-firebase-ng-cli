@@ -22,6 +22,16 @@
         </info-window>
       </div>
 
+      <map-polygon *ngFor="let polygon of polygons"
+        [editable]="polygon.editable"
+        [paths]="polygon.paths"
+        [strokeColor]="polygon.strokeColor"
+        [strokeOpacity]="polygon.strokeOpacity"
+        [strokeWeight]="polygon.strokeWeight"
+        [fillColor]="polygon.fillColor"
+        [fillOpacity]="polygon.fillOpacity">
+      </map-polygon>
+
     </ngui-map>
 
   </div>
