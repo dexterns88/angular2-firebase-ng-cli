@@ -1,0 +1,28 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{ title }}</h2>
+  </div>
+  <div class="panel-body">
+
+    <ngui-map [zoom]="zoom" [center]="'37.7749295, -122.4194155'">
+      <marker
+          *ngFor="let marker of markers; let i = index"
+          #mk
+          [attr.data-index]="i"
+          [position]="marker.position"
+          [icon]="marker.icon"
+          [draggable]="marker.draggable"
+          (click)="markerClick($event, mk)"
+      >
+      </marker>
+
+      <div *ngFor="let marker of markers; let i = index">
+        <info-window *ngIf="marker.infoBox" id="marker-{{ i }}">
+          {{ marker.infoBox.text }}
+        </info-window>
+      </div>
+
+    </ngui-map>
+
+  </div>
+</div>
