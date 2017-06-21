@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { DrawingManager, NguiMapComponent } from '@ngui/map'
 
 @Component({
   selector: 'app-maps2',
   templateUrl: './maps2.component.html',
-  styleUrls: ['./maps2.component.css']
+  styleUrls: ['./maps2.component.css'],
+  providers: [DrawingManager, NguiMapComponent]
 })
 export class Maps2Component implements OnInit {
   private title: string;
@@ -12,11 +14,42 @@ export class Maps2Component implements OnInit {
   private paths: any;
   private polygons: Polygon[];
   private polylines: Polyline[];
+  private infoBoxContent: any;
+  private action: boolean;
 
-  constructor() {
+  private alert: Alert;
+
+  // field collection
+  private field: InputAction;
+  // Flag buttons
+  private btnMarkerIsActive: boolean;
+  private btnPolygonRemove: boolean;
+  private btnDrawing: boolean;
+
+  private selectedOverlay: any;
+  //
+  // Element constructor
+  constructor(private mapDM: DrawingManager) {
+    this.action = false;
+    this.btnMarkerIsActive = false;
+    this.btnPolygonRemove = false;
+    this.btnDrawing = false;
     this.title = 'Map api 2';
     this.zoom = 13;
-    this.markers  = [
+
+    // Define empty alert
+    this.alert = {
+      success: false,
+      info: false,
+      error: false
+    };
+
+    // Define field pattern
+    this.field = {
+      fieldInfoboxContent: ''
+    };
+
+    this.markers = [
       {
         position: {
           lat: 37.7749295,
@@ -30,7 +63,7 @@ export class Maps2Component implements OnInit {
         },
         draggable: true,
         infoBox: {
-          text: 'ovo je info box'
+          text: '<h1>ovo je info box</h1>'
         }
       },
       {
@@ -82,34 +115,6 @@ export class Maps2Component implements OnInit {
         strokeOpacity: 0.8,
         fillColor: '#37aa1c',
         fillOpacity: 0.4
-      },
-      {
-        paths: [
-          [
-            {
-              lat: 37.80083242,
-              lng: -122.42443085
-            },
-            {
-              lat: 37.80503706,
-              lng: -122.40245819
-            },
-            {
-              lat: 37.78930232,
-              lng: -122.38924026
-            },
-            {
-              lat: 37.780891,
-              lng: -122.42031097
-            }
-          ]
-        ],
-        editable: false,
-        strokeColor: '#1d28ff',
-        strokeWeight: 1,
-        strokeOpacity: 0.8,
-        fillColor: '#00226a',
-        fillOpacity: 0.4
       }
     ];
 
@@ -144,57 +149,116 @@ export class Maps2Component implements OnInit {
   }
 
   ngOnInit() {
+
+    console.log( 'test' );
+
+    const _this = this;
+
+    this.mapDM['initialized$'].subscribe(function (dm) {
+      console.log('s');
+      google.maps.event.addListener(dm, 'overlaycomplete', function(event) {
+        if (event.type !== google.maps.drawing.OverlayType.MARKER) {
+          dm.setDrawingMode(null);
+          google.maps.event.addListener(event.overlay, 'click', function(e) {
+            _this.selectedOverlay = event.overlay;
+            _this.selectedOverlay.setEditable(true);
+            console.log( event.overlay );
+          });
+          _this.selectedOverlay = event.overlay;
+        }
+      });
+    });
   }
 
+  // Reset all button state to default
+  buttonStateReset(el) {
+
+    if ( el !== 'marker' ) {
+      this.btnMarkerIsActive = false;
+    }
+
+    if ( el !== 'polygonRemove' ) {
+      this.btnPolygonRemove = false;
+    }
+
+  }
+
+  setAction(action) {
+    this.buttonStateReset(action);
+
+    if ( action === 'marker' ) {
+      this.btnMarkerIsActive = !this.btnMarkerIsActive;
+    } else if ( action === 'polygonRemove' ) {
+      this.btnPolygonRemove = !this.btnPolygonRemove;
+    } else if ( action === 'drawing') {
+      this.btnDrawing = !this.btnDrawing;
+    }
+  }
+
+  // Catch event on polygon
+  polygonEvent(event, val) {
+
+    if (this.btnPolygonRemove) {
+      // Get item index from element
+      const index = val.getAttribute('data-index');
+      // Remove item from array
+      this.polygons.splice(index, 1);
+    }
+  }
+
+  // Event on map click
   mapEvent(event) {
+
     if ( event instanceof MouseEvent ) {
       return;
     }
 
-    // position: MapCord;
-    // icon?: MarkerIcon;
-    // draggable?: boolean;
-    // infoBox?: InfoBox;
-    // let test = [];
-    //
-    // test.push( event.latLng );
-    // console.log( event.latLng );
-    // console.log( test );
-
-    this.markers.push({
-      position: event.latLng,
-      icon: {
-        url: 'assets/pin.png',
-        anchor: [20, 64],
-        size: [40, 64],
-        scaledSize: [40, 64]
-      },
-      draggable: true,
-      infoBox: {
-        text: 'Novi info box'
+    if ( this.btnMarkerIsActive ) {
+      let info = null;
+      /*
+       | position: MapCord;
+       | icon?: MarkerIcon;
+       | draggable?: boolean;
+       | infoBox?: InfoBox;
+       */
+      if ( this.field.fieldInfoboxContent.trim() ) {
+        info = { text: this.field.fieldInfoboxContent.trim() };
+        this.field.fieldInfoboxContent = '';
       }
-    });
 
-    // console.log( this.markers );
-    //
-    // console.log( event );
-  }
+      this.markers.push({
+        position: event.latLng,
+        icon: {
+          url: 'assets/pin.png',
+          anchor: [20, 64],
+          size: [40, 64],
+          scaledSize: [40, 64]
+        },
+        draggable: true,
+        infoBox: info
+      });
 
-  rePolyline() {
+      this.alert.success = 'Marker added to map';
 
-    this.polylines[0].paths.push({lat: 37.76399764 , lng: -122.51026154});
-    console.log( 'change line' );
+    }
   }
   
   markerClick($event, val) {
-    const marker = $event.target;
-    const markerId = val.getAttribute('data-index');
-    const id = 'marker-' + markerId;
 
-    // Fire event if element exist
-    if ( this.markers[markerId].infoBox !== undefined ) {
-      marker.nguiMapComponent.openInfoWindow( id, marker);
+    const infoBox = JSON.parse( val.getAttribute('data-popup') );
+
+    // exit if infoBox doesn't exist for selected marker
+    if ( infoBox == null ) {
+      return;
     }
+
+    const marker = $event.target;
+    // pass infoBox content to template
+    this.infoBoxContent = infoBox.text;
+
+    setTimeout(function() {
+      marker.nguiMapComponent.openInfoWindow('info-popup', marker);
+    }, 20);
   }
 }
 
@@ -243,4 +307,14 @@ interface MarkerIcon {
   anchor?: Array<number>;
   size?: Array<number>;
   scaledSize?: Array<number>;
+}
+
+interface InputAction {
+  fieldInfoboxContent: any;
+}
+
+interface Alert {
+  success: any;
+  info: any;
+  error: any;
 }

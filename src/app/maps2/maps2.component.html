@@ -6,36 +6,75 @@
 
     <div>
       <p>
-        <button class="btn btn-default" (click)="rePolyline()">Change location</button>
+        <button [ngClass]="{'btn-success':btnMarkerIsActive}" class="btn btn-default" (click)="setAction('marker')">Add new marker</button>
+        <button [ngClass]="{'btn-success':btnPolygonRemove}" (click)="setAction('polygonRemove')" class="btn btn-default">Remove polygon</button>
+        <button [ngClass]="{'btn-success':btnDrawing}" class="btn btn-default" (click)="setAction('drawing')">Drawing manager</button>
       </p>
     </div>
+
+    <div *ngIf="btnPolygonRemove" class="alert alert-dismissible alert-info">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      Your need to click on poligon to remove it!!!
+    </div>
+
+    <div *ngIf="btnMarkerIsActive"  class="well">
+      <form name="markerInfoBox">
+
+        <div class="form-group">
+          <label for="textArea">Set marker infobox content:</label>
+          <textarea name="fieldInfoboxContent" [(ngModel)]="field.fieldInfoboxContent" #fieldInfoboxContent="ngModel" class="form-control" rows="3" id="textArea"></textarea>
+          <span class="help-block">
+            HTML is approved, Left empty if you don't want info box on marker
+          </span>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="alert.success" class="alert alert-dismissible alert-success">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      {{ alert.success }}
+    </div>
+
+    <div *ngIf="alert.error" class="alert alert-dismissible alert-danger">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      {{ alert.error }}
+    </div>
+
+    <div *ngIf="alert.info" class="alert alert-dismissible alert-info">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      {{ alert.info }}
+    </div>
+
 
     <ngui-map [zoom]="zoom" [center]="'37.7749295, -122.4194155'" (click)="mapEvent($event)">
       <marker
           *ngFor="let marker of markers; let i = index"
-          #mk
-          [attr.data-index]="i"
+          [attr.data-popup]="marker.infoBox | json"
           [position]="marker.position"
           [icon]="marker.icon"
           [draggable]="marker.draggable"
+          #mk
           (click)="markerClick($event, mk)"
       >
       </marker>
 
-      <div *ngFor="let marker of markers; let i = index">
-        <info-window *ngIf="marker.infoBox" id="marker-{{ i }}">
-          {{ marker.infoBox.text }}
-        </info-window>
-      </div>
+      <!-- infobox popopu -->
+      <info-window id="info-popup">
+        <div [innerHTML]="infoBoxContent"></div>
+      </info-window>
 
-      <map-polygon *ngFor="let polygon of polygons"
+      <map-polygon *ngFor="let polygon of polygons; let i = index"
+        [attr.data-index]="i"
         [editable]="polygon.editable"
         [paths]="polygon.paths"
         [strokeColor]="polygon.strokeColor"
         [strokeOpacity]="polygon.strokeOpacity"
         [strokeWeight]="polygon.strokeWeight"
         [fillColor]="polygon.fillColor"
-        [fillOpacity]="polygon.fillOpacity">
+        [fillOpacity]="polygon.fillOpacity"
+        #pl
+        (click)="polygonEvent($event, pl)"
+      >
       </map-polygon>
 
       <polyline *ngFor="let polyline of polylines"
@@ -48,7 +87,26 @@
       >
       </polyline>
 
+      <!-- DRAWING MANAGER -->
+      <drawing-manager *ngIf="btnDrawing"
+          [drawingMode]="'polyline'"
+          [drawingControl]="true"
+          [drawingControlOptions]="{
+            position: 2,
+            drawingModes: ['circle', 'polygon', 'polyline', 'rectangle']
+          }"
+          [circleOptions]="{
+            fillColor: '#ffff00',
+            fillOpacity: 1,
+            strokeWeight: 5,
+            editable: true,
+            zIndex: 1
+          }"
+      >
+      </drawing-manager>
     </ngui-map>
+
+    selectedOverlay: {{selectedOverlay}} <br/>
 
   </div>
 </div>

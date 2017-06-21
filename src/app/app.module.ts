@@ -47,7 +47,7 @@ import { Maps2Component } from './maps2/maps2.component';
       apiKey: environment.mapsApiKey
     }),
     NguiMapModule.forRoot({
-      apiUrl: 'https://maps.google.com/maps/api/js?key=' + environment.mapsApiKey
+      apiUrl: 'https://maps.google.com/maps/api/js?key=' + environment.mapsApiKey + '&libraries=visualization,places,drawing'
     }),
     AngularFireModule.initializeApp(environment.firebase, 'Firebase-application'),
     AngularFireDatabaseModule,
