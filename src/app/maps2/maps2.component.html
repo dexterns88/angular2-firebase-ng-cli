@@ -4,7 +4,13 @@
   </div>
   <div class="panel-body">
 
-    <ngui-map [zoom]="zoom" [center]="'37.7749295, -122.4194155'">
+    <div>
+      <p>
+        <button class="btn btn-default" (click)="rePolyline()">Change location</button>
+      </p>
+    </div>
+
+    <ngui-map [zoom]="zoom" [center]="'37.7749295, -122.4194155'" (click)="mapEvent($event)">
       <marker
           *ngFor="let marker of markers; let i = index"
           #mk
@@ -31,6 +37,16 @@
         [fillColor]="polygon.fillColor"
         [fillOpacity]="polygon.fillOpacity">
       </map-polygon>
+
+      <polyline *ngFor="let polyline of polylines"
+        [editable]="polyline.editable"
+        [path]="polyline.paths"
+        [geodesic]="polyline.geodesic"
+        [strokeColor]="polyline.strokeColor"
+        [strokeOpacity]="polyline.strokeOpacity"
+        [strokeWeight]="polyline.strokeWeight"
+      >
+      </polyline>
 
     </ngui-map>
 

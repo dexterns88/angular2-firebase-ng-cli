@@ -11,6 +11,7 @@ export class Maps2Component implements OnInit {
   private markers: Marker[];
   private paths: any;
   private polygons: Polygon[];
+  private polylines: Polyline[];
 
   constructor() {
     this.title = 'Map api 2';
@@ -59,6 +60,20 @@ export class Maps2Component implements OnInit {
               lat: 37.79703447,
               lng: -122.46974945
             }
+          ],
+          [
+            {
+              lat: 37.79510151,
+              lng: -122.46700287
+            },
+            {
+              lat: 37.77736339,
+              lng: -122.44588852
+            },
+            {
+              lat: 37.78428278,
+              lng: -122.43610382,
+            },
           ]
         ],
         editable: false,
@@ -98,12 +113,79 @@ export class Maps2Component implements OnInit {
       }
     ];
 
+    this.polylines = [
+      {
+        paths: [
+          {
+            lat: 37.772,
+            lng: -122.214
+          },
+          {
+            lat: 21.291,
+            lng: -157.821
+          },
+          {
+            lat: -18.142,
+            lng: 178.431
+          },
+          {
+            lat: -27.467,
+            lng: 153.027
+          }
+        ],
+        strokeColor: '#d00500',
+        strokeWeight: 2,
+        editable: true,
+        geodesic: true
+      }
+    ]
+
   // constructor end
   }
 
   ngOnInit() {
   }
 
+  mapEvent(event) {
+    if ( event instanceof MouseEvent ) {
+      return;
+    }
+
+    // position: MapCord;
+    // icon?: MarkerIcon;
+    // draggable?: boolean;
+    // infoBox?: InfoBox;
+    // let test = [];
+    //
+    // test.push( event.latLng );
+    // console.log( event.latLng );
+    // console.log( test );
+
+    this.markers.push({
+      position: event.latLng,
+      icon: {
+        url: 'assets/pin.png',
+        anchor: [20, 64],
+        size: [40, 64],
+        scaledSize: [40, 64]
+      },
+      draggable: true,
+      infoBox: {
+        text: 'Novi info box'
+      }
+    });
+
+    // console.log( this.markers );
+    //
+    // console.log( event );
+  }
+
+  rePolyline() {
+
+    this.polylines[0].paths.push({lat: 37.76399764 , lng: -122.51026154});
+    console.log( 'change line' );
+  }
+  
   markerClick($event, val) {
     const marker = $event.target;
     const markerId = val.getAttribute('data-index');
@@ -124,6 +206,15 @@ interface Polygon {
   strokeOpacity?: number;
   fillColor?: string;
   fillOpacity?: number;
+}
+
+interface Polyline {
+  paths: Cord[];
+  editable: boolean;
+  geodesic: boolean;
+  strokeColor: string;
+  strokeOpacity?: number;
+  strokeWeight?: number;
 }
 
 interface Cord {
