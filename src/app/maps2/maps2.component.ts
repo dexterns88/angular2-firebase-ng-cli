@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DrawingManager, NguiMapComponent } from '@ngui/map'
 
 @Component({
@@ -8,6 +8,9 @@ import { DrawingManager, NguiMapComponent } from '@ngui/map'
   providers: [DrawingManager, NguiMapComponent]
 })
 export class Maps2Component implements OnInit {
+
+  @ViewChild(DrawingManager) drawingManager: DrawingManager;
+
   private title: string;
   private zoom: number;
   private markers: Marker[];
@@ -29,7 +32,7 @@ export class Maps2Component implements OnInit {
   private selectedOverlay: any;
   //
   // Element constructor
-  constructor(private mapDM: DrawingManager) {
+  constructor() {
     this.action = false;
     this.btnMarkerIsActive = false;
     this.btnPolygonRemove = false;
@@ -150,21 +153,21 @@ export class Maps2Component implements OnInit {
 
   ngOnInit() {
 
-    console.log( 'test' );
-
     const _this = this;
 
-    this.mapDM['initialized$'].subscribe(function (dm) {
-      console.log('s');
+    this.drawingManager['initialized$'].subscribe(function (dm) {
       google.maps.event.addListener(dm, 'overlaycomplete', function(event) {
+
+        // if not MARKER
+        console.log( event.type );
+
         if (event.type !== google.maps.drawing.OverlayType.MARKER) {
           dm.setDrawingMode(null);
           google.maps.event.addListener(event.overlay, 'click', function(e) {
             _this.selectedOverlay = event.overlay;
             _this.selectedOverlay.setEditable(true);
-            console.log( event.overlay );
           });
-          _this.selectedOverlay = event.overlay;
+          // _this.selectedOverlay = event.overlay;
         }
       });
     });

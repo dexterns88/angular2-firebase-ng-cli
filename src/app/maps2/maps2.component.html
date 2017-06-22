@@ -88,12 +88,13 @@
       </polyline>
 
       <!-- DRAWING MANAGER -->
-      <drawing-manager *ngIf="btnDrawing"
+      <!-- *ngIf="btnDrawing" -->
+      <drawing-manager
           [drawingMode]="'polyline'"
           [drawingControl]="true"
           [drawingControlOptions]="{
             position: 2,
-            drawingModes: ['circle', 'polygon', 'polyline', 'rectangle']
+            drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
           }"
           [circleOptions]="{
             fillColor: '#ffff00',
@@ -105,8 +106,10 @@
       >
       </drawing-manager>
     </ngui-map>
+    <div class="well well-sm">
+      selectedOverlay: {{selectedOverlay}}
+    </div>
 
-    selectedOverlay: {{selectedOverlay}} <br/>
 
   </div>
 </div>

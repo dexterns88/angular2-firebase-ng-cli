@@ -16,7 +16,8 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 // Google maps
 import { AgmCoreModule } from '@agm/core';
-import {NguiMapModule} from '@ngui/map';
+import { NguiMapModule } from '@ngui/map';
+import { NguiUtilsModule } from '@ngui/utils';
 
 // Import environment
 import { environment } from '../environments/environment';
@@ -49,6 +50,7 @@ import { Maps2Component } from './maps2/maps2.component';
     NguiMapModule.forRoot({
       apiUrl: 'https://maps.google.com/maps/api/js?key=' + environment.mapsApiKey + '&libraries=visualization,places,drawing'
     }),
+    NguiUtilsModule,
     AngularFireModule.initializeApp(environment.firebase, 'Firebase-application'),
     AngularFireDatabaseModule,
     AngularFireAuthModule
