@@ -8,7 +8,7 @@
       <p>
         <button [ngClass]="{'btn-success':btnMarkerIsActive}" class="btn btn-default" (click)="setAction('marker')">Add new marker</button>
         <button [ngClass]="{'btn-success':btnPolygonRemove}" (click)="setAction('polygonRemove')" class="btn btn-default">Remove polygon</button>
-        <button [ngClass]="{'btn-success':btnDrawing}" class="btn btn-default" (click)="setAction('drawing')">Drawing manager</button>
+        <button (click)="saveDrawing()" class="btn btn-success">Save Drawing</button>
       </p>
     </div>
 
@@ -46,7 +46,7 @@
     </div>
 
 
-    <ngui-map [zoom]="zoom" [center]="'37.7749295, -122.4194155'" (click)="mapEvent($event)">
+    <ngui-map [ngClass]="{'drawing':btnDrawing}" [zoom]="zoom" [center]="'37.7749295, -122.4194155'" (click)="mapEvent($event)">
       <marker
           *ngFor="let marker of markers; let i = index"
           [attr.data-popup]="marker.infoBox | json"
@@ -90,11 +90,11 @@
       <!-- DRAWING MANAGER -->
       <!-- *ngIf="btnDrawing" -->
       <drawing-manager
-          [drawingMode]="'polyline'"
+          [drawingMode]="'polygon'"
           [drawingControl]="true"
           [drawingControlOptions]="{
             position: 2,
-            drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+            drawingModes: ['circle', 'polygon', 'polyline', 'rectangle']
           }"
           [circleOptions]="{
             fillColor: '#ffff00',

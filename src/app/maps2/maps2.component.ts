@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DrawingManager, NguiMapComponent } from '@ngui/map'
+import { DrawingManager } from '@ngui/map'
+import {log} from "util";
 
 @Component({
   selector: 'app-maps2',
   templateUrl: './maps2.component.html',
   styleUrls: ['./maps2.component.css'],
-  providers: [DrawingManager, NguiMapComponent]
+  providers: [DrawingManager]
 })
 export class Maps2Component implements OnInit {
 
@@ -27,7 +28,10 @@ export class Maps2Component implements OnInit {
   // Flag buttons
   private btnMarkerIsActive: boolean;
   private btnPolygonRemove: boolean;
+
   private btnDrawing: boolean;
+  private drawingIndex: number;
+  private drawingObjects: any;
 
   private selectedOverlay: any;
   //
@@ -36,9 +40,11 @@ export class Maps2Component implements OnInit {
     this.action = false;
     this.btnMarkerIsActive = false;
     this.btnPolygonRemove = false;
-    this.btnDrawing = false;
     this.title = 'Map api 2';
     this.zoom = 13;
+
+    this.drawingIndex = 0;
+    this.drawingObjects = [];
 
     // Define empty alert
     this.alert = {
@@ -80,46 +86,52 @@ export class Maps2Component implements OnInit {
       }
     ];
 
-    this.polygons = [
-      {
-        paths: [
-          [
-            {
-              lat: 37.78563945,
-              lng: -122.42082596
-            },
-            {
-              lat: 37.77166458,
-              lng: -122.44588852
-            },
-            {
-              lat: 37.79703447,
-              lng: -122.46974945
-            }
-          ],
-          [
-            {
-              lat: 37.79510151,
-              lng: -122.46700287
-            },
-            {
-              lat: 37.77736339,
-              lng: -122.44588852
-            },
-            {
-              lat: 37.78428278,
-              lng: -122.43610382,
-            },
-          ]
-        ],
-        editable: false,
-        strokeColor: '#53ff21',
-        strokeWeight: 1,
-        strokeOpacity: 0.8,
-        fillColor: '#37aa1c',
-        fillOpacity: 0.4
-      }
-    ];
+    // this.polygons = [
+    //   {
+    //     paths: [
+    //       [
+    //         {
+    //           lat: 37.78563945,
+    //           lng: -122.42082596
+    //         },
+    //         {
+    //           lat: 37.77166458,
+    //           lng: -122.44588852
+    //         },
+    //         {
+    //           lat: 37.79703447,
+    //           lng: -122.46974945
+    //         }
+    //       ],
+    //       [
+    //         {
+    //           lat: 37.79510151,
+    //           lng: -122.46700287
+    //         },
+    //         {
+    //           lat: 37.77736339,
+    //           lng: -122.44588852
+    //         },
+    //         {
+    //           lat: 37.78428278,
+    //           lng: -122.43610382,
+    //         },
+    //       ]
+    //     ],
+    //     editable: false,
+    //     strokeColor: '#53ff21',
+    //     strokeWeight: 1,
+    //     strokeOpacity: 0.8,
+    //     fillColor: '#37aa1c',
+    //     fillOpacity: 0.4
+    //   }
+    // ];
+
+    // let toStorage = JSON.stringify( this.polygons );
+    // localStorage.setItem( 'map-polygons', toStorage );
+    // Get polygons from local storage
+    this.polygons = JSON.parse( localStorage.getItem('map-polygons') );
+
 
     this.polylines = [
       {
@@ -159,18 +171,146 @@ export class Maps2Component implements OnInit {
       google.maps.event.addListener(dm, 'overlaycomplete', function(event) {
 
         // if not MARKER
-        console.log( event.type );
-
         if (event.type !== google.maps.drawing.OverlayType.MARKER) {
           dm.setDrawingMode(null);
           google.maps.event.addListener(event.overlay, 'click', function(e) {
             _this.selectedOverlay = event.overlay;
             _this.selectedOverlay.setEditable(true);
           });
-          // _this.selectedOverlay = event.overlay;
+
+          // console.log( event.overlay );
+
+          if ( event.type === 'polygon') {
+            const path = event.overlay.getPath(),
+                  pathArray = path.getArray();
+
+            // console.log( event );
+            // console.log( event.overlay );
+
+            _this.addPolygon( event );
+
+            google.maps.event.addListener(path, 'insert_at', function() {
+              console.log( 'insert at' );
+              // console.log( event );
+
+              _this.addPolygon( event );
+              // console.log( this.getArray() );
+            });
+
+            google.maps.event.addListener(path, 'remove_at', function() {
+              console.log( 'remove at' );
+              console.log( event );
+              // console.log( this );
+            });
+
+            google.maps.event.addListener(path, 'set_at', function() {
+              console.log( 'set at' );
+              console.log( event );
+              // console.log( this.getArray() );
+            });
+          }
+
+          // insert_at
+          // remove_at
+          // set_at
+
+
         }
       });
     });
+  }
+
+  // Function to save drawing to local storage
+  saveDrawing() {
+    console.log( 'local storage it' );
+
+    for (let i = 0; i < this.drawingObjects.length; i++) {
+      let drawObj = this.drawingObjects[i];
+
+      if (drawObj.type === 'polygon') {
+        // let tmpPolygon = {
+        //   paths: [
+        //       [
+        //         {
+        //           lat: 37.78563945,
+        //           lng: -122.42082596
+        //         },
+        //         {
+        //           lat: 37.77166458,
+        //           lng: -122.44588852
+        //         },
+        //         {
+        //           lat: 37.79703447,
+        //           lng: -122.46974945
+        //         }
+        //       ],
+        //       [
+        //         {
+        //           lat: 37.79510151,
+        //           lng: -122.46700287
+        //         },
+        //         {
+        //           lat: 37.77736339,
+        //           lng: -122.44588852
+        //         },
+        //         {
+        //           lat: 37.78428278,
+        //           lng: -122.43610382,
+        //         },
+        //       ]
+        //     ],
+        //     editable: false,
+        //     strokeColor: '#ff2848',
+        //     strokeWeight: 1,
+        //     strokeOpacity: 0.8,
+        //     fillColor: '#4f37aa',
+        //     fillOpacity: 0.4
+        // }
+        console.log( drawObj.overlay.getPaths().getArray() );
+
+      }
+      console.log( drawObj );
+    }
+
+    // this.polygons.push({
+    //   paths: [
+    //     [
+    //       {
+    //         lat: 37.78563945,
+    //         lng: -122.42082596
+    //       },
+    //       {
+    //         lat: 37.77166458,
+    //         lng: -122.44588852
+    //       },
+    //       {
+    //         lat: 37.79703447,
+    //         lng: -122.46974945
+    //       }
+    //     ],
+    //     [
+    //       {
+    //         lat: 37.79510151,
+    //         lng: -122.46700287
+    //       },
+    //       {
+    //         lat: 37.77736339,
+    //         lng: -122.44588852
+    //       },
+    //       {
+    //         lat: 37.78428278,
+    //         lng: -122.43610382,
+    //       },
+    //     ]
+    //   ],
+    //   editable: false,
+    //   strokeColor: '#ff2848',
+    //   strokeWeight: 1,
+    //   strokeOpacity: 0.8,
+    //   fillColor: '#4f37aa',
+    //   fillOpacity: 0.4
+    // });
+
   }
 
   // Reset all button state to default
@@ -193,8 +333,6 @@ export class Maps2Component implements OnInit {
       this.btnMarkerIsActive = !this.btnMarkerIsActive;
     } else if ( action === 'polygonRemove' ) {
       this.btnPolygonRemove = !this.btnPolygonRemove;
-    } else if ( action === 'drawing') {
-      this.btnDrawing = !this.btnDrawing;
     }
   }
 
@@ -262,6 +400,24 @@ export class Maps2Component implements OnInit {
     setTimeout(function() {
       marker.nguiMapComponent.openInfoWindow('info-popup', marker);
     }, 20);
+  }
+
+  // create add function for object
+  addPolygon(object) {
+    let objectIndex;
+
+    if ( typeof(object.index) === 'undefined' ) {
+      objectIndex = this.drawingIndex;
+      this.drawingIndex++;
+      object['index'] = objectIndex;
+    } else {
+      objectIndex = object.index;
+    }
+
+    // if object is undefined hide it
+    if ( typeof( this.drawingObjects[objectIndex] ) === 'undefined' ) {
+      this.drawingObjects.push( object );
+    }
   }
 }
 

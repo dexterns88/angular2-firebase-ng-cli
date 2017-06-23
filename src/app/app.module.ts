@@ -16,8 +16,8 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 // Google maps
 import { AgmCoreModule } from '@agm/core';
-import { NguiMapModule } from '@ngui/map';
 import { NguiUtilsModule } from '@ngui/utils';
+import { NguiMapModule } from '@ngui/map';
 
 // Import environment
 import { environment } from '../environments/environment';
